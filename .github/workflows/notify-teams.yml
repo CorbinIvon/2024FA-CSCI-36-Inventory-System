@@ -41,29 +41,26 @@ jobs:
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "0076D7"
 
-      # Concatenate all commit messages for push events
+      # Collect all commit messages from the push event
       - name: Collect Commit Messages
         if: ${{ github.event_name == 'push' }}
         run: |
-          echo "Commit Messages:" > commit_messages.txt
+          COMMIT_MESSAGES=""
           for commit in "${{ toJson(github.event.commits) }}" ; do
-            echo "- $commit.message" >> commit_messages.txt
+            COMMIT_MESSAGES="${COMMIT_MESSAGES}- $commit.message"$'\n'
           done
+          echo "COMMIT_MESSAGES=$COMMIT_MESSAGES" >> $GITHUB_ENV
         shell: bash
 
-      - name: Display All Commit Messages
-        if: ${{ github.event_name == 'push' }}
-        run: cat commit_messages.txt
-
+      # Microsoft Teams Notification for Push Events with all commit messages
       - name: Microsoft Teams Notification for Push Events
         if: ${{ github.event_name == 'push' }}
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           title: "${{ github.actor }} - Pushed Commits"
-          summary: "${{ github.actor }} pushed commits"
-          text: |
-            $(cat commit_messages.txt) # Include all commit messages here
+          summary: "${{ github.actor }} pushed multiple commits"
+          text: "${{ env.COMMIT_MESSAGES }}" # Use the environment variable that contains all commit messages
           theme_color: "0076D7"
 
       # Notify for issue comments
