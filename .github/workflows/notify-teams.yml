@@ -85,7 +85,7 @@ jobs:
           summary: "${{ github.actor }} pushed a new commit"
           text: |
             <code><a href="${{ matrix.commit.url }}">${{ matrix.commit.id }}</a></code><br>
-            ${{ matrix.commit.message }}<hr>
+            ${{ matrix.commit.message }}<hr> 
           theme_color: "12bd0f"
 
       # Notify for release events
