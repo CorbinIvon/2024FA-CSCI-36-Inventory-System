@@ -33,7 +33,7 @@ jobs:
             commit_messages="$commit_messages<code><a href='$commit_url'>$commit_id</a></code><br>$commit_message<hr>"
           done <<< "$commits"
           
-          # Debug: Log the content of commit_messages to see if it contains anything 
+          # Debug: Log the content of commit_messages to see if it contains anything
           echo "Commit messages content:"
           echo "$commit_messages"
 
