@@ -25,6 +25,7 @@ jobs:
           summary: "${{ github.actor }} - Issue ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **New Issue**: ${{ github.event.issue.title }}
           theme_color: "bd0f0f"
 
@@ -38,6 +39,7 @@ jobs:
           summary: "${{ github.actor }} - Comment ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **New Comment**: ${{ github.event.comment.body }}
           theme_color: "bd4f0f"
 
@@ -51,6 +53,7 @@ jobs:
           summary: "${{ github.actor }} - Pull Request ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "660fbd"
       
@@ -63,6 +66,7 @@ jobs:
           title: "${{ github.actor }} - Pushed Commits"
           summary: "${{ github.actor }} Pushed Commits"
           text: |
+            ${{ github.event_name }}<br>
             **Commits:**<hr>
             ${{ join(github.event.commits.*.message, '<hr>') }}
           theme_color: "12bd0f"
@@ -77,6 +81,7 @@ jobs:
           summary: "${{ github.actor }} - Release ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **New Release**: ${{ github.event.release.name }} - ${{ github.event.release.tag_name }}
           theme_color: "0076D7"
 
@@ -90,6 +95,7 @@ jobs:
           summary: "${{ github.actor }} - Fork ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **Repository Forked**: ${{ github.repository.full_name }} was forked by ${{ github.actor }}
           theme_color: "0fbd80"
 
@@ -105,5 +111,6 @@ jobs:
             github.event_name }} ${{
             github.event.action }}"
           text: |
+            ${{ github.event_name }}<br>
             **Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}
           theme_color: "ec05fc"
