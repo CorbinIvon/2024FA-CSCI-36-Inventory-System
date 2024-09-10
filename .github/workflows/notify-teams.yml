@@ -51,7 +51,7 @@ jobs:
           summary: "${{ github.actor }} pushed commits"
           text: |
             **Commit Message**: ${{ github.event.commits[0].message }}
-          theme_color: "0076D7" 
+          theme_color: "0076D7"
 
       # Notify for issue comments
       - name: Microsoft Teams Notification for Issue Comments
