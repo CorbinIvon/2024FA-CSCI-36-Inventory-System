@@ -84,7 +84,7 @@ jobs:
             ${{ github.event_name }}<br>
             **Issue Title**: ${{ github.event.issue.title }}<br>
             **Status**: Issue has been closed by ${{ github.actor }}
-          theme_color: "ff0000"
+          theme_color: "5600d7"
 
 
       # Notify for issue comments
