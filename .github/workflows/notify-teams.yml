@@ -48,7 +48,7 @@ jobs:
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           title: "${{ github.actor }} - Pushed Commits"
-          summary: "${{ github.actor }} pushed multiple commits"
+          summary: "${{ github.actor }} Pushed Commits"
           text: |
             **Commits:**
             ${{ join(github.event.commits.*.message, '\n- ') }}
