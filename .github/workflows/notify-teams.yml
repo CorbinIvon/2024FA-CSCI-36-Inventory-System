@@ -15,18 +15,40 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Microsoft Teams (Generic)
+      - name: Set message for issue
+        if: ${{ github.event_name == 'issues' }}
+        run: echo "Message=**New Issue**: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})" >> $GITHUB_ENV
+
+      - name: Set message for pull request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "Message=**Pull Request**: [${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})" >> $GITHUB_ENV
+
+      - name: Set message for push
+        if: ${{ github.event_name == 'push' }}
+        run: echo "Message=**Commit**: [${{ github.event.commits[0].message }}](${{
+          github.event.repository.html_url }}/commit/${{ github.event.commits[0].id }})" >> $GITHUB_ENV
+
+      - name: Set message for issue comment
+        if: ${{ github.event_name == 'issue_comment' }}
+        run: echo "Message=**New Comment**: [Comment by ${{ github.actor }}](${{ github.event.comment.html_url }})" >> $GITHUB_ENV
+
+      - name: Set message for release
+        if: ${{ github.event_name == 'release' }}
+        run: echo "Message=**New Release**: [${{ github.event.release.name }}](${{ github.event.release.html_url }}) - ${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+
+      - name: Set message for fork
+        if: ${{ github.event_name == 'fork' }}
+        run: echo "Message=**Repository Forked**: [${{ github.repository.full_name }}](${{ github.repository.html_url }}) was forked by ${{ github.actor }}" >> $GITHUB_ENV
+
+      - name: Default message
+        if: ${{ !env.Message }}
+        run: echo "Message=**Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}" >> $GITHUB_ENV
+
+      - name: Send Microsoft Teams notification
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           title: "${{ github.actor }} - ${{ github.event_name }}"
           summary: "${{ github.actor }} - ${{ github.event.action }}"
-          text: |
-            ${{ github.event.issue ? '**New Issue**: [' + github.event.issue.title + '](' + github.event.issue.html_url + ')' 
-            : github.event.pull_request ? '**Pull Request**: [' + github.event.pull_request.title + '](' + github.event.pull_request.html_url + ')' 
-            : github.event.commits ? '**Commit**: [' + github.event.commits[0].message + '](' + github.event.repository.html_url + '/commit/' + github.event.commits[0].id + ')' 
-            : github.event.comment ? '**New Comment**: [Comment by ' + github.actor + '](' + github.event.comment.html_url + ') on issue/pull request' 
-            : github.event.release ? '**New Release**: [' + github.event.release.name + '](' + github.event.release.html_url + ') - ' + github.event.release.tag_name 
-            : github.event.fork ? '**Repository Forked**: [' + github.repository.full_name + '](' + github.repository.html_url + ') was forked by ' + github.actor 
-            : '**Action Details**: Event: ' + github.event_name + ', Action: ' + github.event.action }}
+          text: "${{ env.Message }}"
           theme_color: "0076D7"  # Optional: Customize with a hexadecimal color
