@@ -26,33 +26,7 @@ jobs:
             github.event.action }}"
           text: |
             **New Issue**: ${{ github.event.issue.title }}
-          theme_color: "0076D7"
-
-      # Notify for pull request events
-      - name: Microsoft Teams Notification for Pull Requests
-        if: ${{ github.event.pull_request }}
-        uses: aliencube/microsoft-teams-actions@v0.8.0
-        with:
-          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          title: "${{ github.actor }} - Pull Request Event"
-          summary: "${{ github.actor }} - Pull Request ${{
-            github.event.action }}"
-          text: |
-            **Pull Request**: ${{ github.event.pull_request.title }}
-          theme_color: "0076D7"
-      
-      # Send notification to Microsoft Teams for push events with all commit messages
-      - name: Microsoft Teams Notification for Push Events
-        if: ${{ github.event_name == 'push' }}
-        uses: aliencube/microsoft-teams-actions@v0.8.0
-        with:
-          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          title: "${{ github.actor }} - Pushed Commits"
-          summary: "${{ github.actor }} Pushed Commits"
-          text: |
-            **Commits:**<hr>
-            ${{ join(github.event.commits.*.message, '<hr>') }}
-          theme_color: "0076D7"
+          theme_color: "bd0f0f"
 
       # Notify for issue comments
       - name: Microsoft Teams Notification for Issue Comments
@@ -65,7 +39,33 @@ jobs:
             github.event.action }}"
           text: |
             **New Comment**: ${{ github.event.comment.body }}
-          theme_color: "0076D7"
+          theme_color: "bd4f0f"
+
+      # Notify for pull request events
+      - name: Microsoft Teams Notification for Pull Requests
+        if: ${{ github.event.pull_request }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          title: "${{ github.actor }} - Pull Request Event"
+          summary: "${{ github.actor }} - Pull Request ${{
+            github.event.action }}"
+          text: |
+            **Pull Request**: ${{ github.event.pull_request.title }}
+          theme_color: "660fbd"
+      
+      # Send notification to Microsoft Teams for push events with all commit messages
+      - name: Microsoft Teams Notification for Push Events
+        if: ${{ github.event_name == 'push' }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          title: "${{ github.actor }} - Pushed Commits"
+          summary: "${{ github.actor }} Pushed Commits"
+          text: |
+            **Commits:**<hr>
+            ${{ join(github.event.commits.*.message, '<hr>') }}
+          theme_color: "12bd0f"
 
       # Notify for release events
       - name: Microsoft Teams Notification for Releases
@@ -91,7 +91,7 @@ jobs:
             github.event.action }}"
           text: |
             **Repository Forked**: ${{ github.repository.full_name }} was forked by ${{ github.actor }}
-          theme_color: "0076D7"
+          theme_color: "0fbd80"
 
       # Default notification for any other actions not covered
       - name: Microsoft Teams Default Notification
