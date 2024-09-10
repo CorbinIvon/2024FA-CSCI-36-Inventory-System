@@ -10,7 +10,6 @@ on:
   pull_request_review: # Trigger on pull request reviews
   pull_request_target:
   release:  # Trigger on release events
-  star: # Trigger on repository stars
   fork: # Trigger when repo is forked
 
 jobs:
