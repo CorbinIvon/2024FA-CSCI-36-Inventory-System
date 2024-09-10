@@ -16,18 +16,19 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.matrix.outputs.commit_data }}
+      commit_messages: ${{ steps.collect.outputs.commit_messages }}
     steps:
-      # Collect commit IDs, URLs, and messages as a matrix
-      - id: matrix
+      # Collect all commit details in a single output
+      - id: collect
         run: |
-          # Convert commits to a valid JSON string and process with jq
-          commits=$(echo '${{ toJson(github.event.commits) }}' | jq -c '[.[] | {id: .id, message: .message, url: .url}]')
-
-          # Output the commit data to GITHUB_OUTPUT
-          echo "commit_data=$commits" >> $GITHUB_OUTPUT
-      - run: |
-          echo "Commit Data: ${{ steps.matrix.outputs.commit_data }}"
+          commit_messages=""
+          for commit in "${{ toJson(github.event.commits) }}"; do
+            commit_id=$(echo $commit | jq -r '.id')
+            commit_url=$(echo $commit | jq -r '.url')
+            commit_message=$(echo $commit | jq -r '.message')
+            commit_messages="$commit_messages<code><a href=\"$commit_url\">$commit_id</a></code><br>$commit_message<hr>"
+          done
+          echo "commit_messages=$commit_messages" >> $GITHUB_OUTPUT
 
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
@@ -76,16 +77,14 @@ jobs:
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "660fbd"
 
-      # Send notification to Microsoft Teams for push events with all commit messages
+      # Send notification with all commit details in a single webhook
       - name: Microsoft Teams Notification for Push Events
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          title: "${{ github.actor }} - Pushed Commit"
-          summary: "${{ github.actor }} pushed a new commit"
-          text: |
-            <code><a href="${{ matrix.commit.url }}">${{ matrix.commit.id }}</a></code><br>
-            ${{ matrix.commit.message }}<hr>
+          title: "${{ github.actor }} - Pushed Commits"
+          summary: "${{ github.actor }} pushed new commits"
+          text: "${{ needs.setup_push_commits.outputs.commit_messages }}"
           theme_color: "12bd0f"
 
       # Notify for release events
