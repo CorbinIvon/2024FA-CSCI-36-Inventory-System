@@ -41,7 +41,7 @@ jobs:
         run: echo "Message=**Repository Forked**: [${{ github.repository.full_name }}](${{ github.repository.html_url }}) was forked by ${{ github.actor }}" >> $GITHUB_ENV
 
       - name: Default message
-        if: ${{ !env.Message }}
+        if: ${{ env.Message == '' || env.Message == null }}
         run: echo "Message=**Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}" >> $GITHUB_ENV
 
       - name: Send Microsoft Teams notification
