@@ -29,9 +29,10 @@ jobs:
             commit_message=$(echo $commit | jq -r '.message')
             commit_messages="$commit_messages<code><a href=\"$commit_url\">$commit_id</a></code><br>$commit_message<hr>"
           done
-          echo "commit_messages=$commit_messages" >> $GITHUB_OUTPUT
-      - run: |
-          echo "Commit Data: ${{ steps.collect.outputs.commit_messages }}"
+          # Properly output commit messages to GITHUB_OUTPUT
+          echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
+          echo "$commit_messages" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
