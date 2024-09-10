@@ -63,7 +63,7 @@ jobs:
           title: "${{ github.actor }} - Comment Event"
           summary: "${{ github.actor }} - Comment ${{
             github.event.action }}"
-          text: |
+          text: | 
             **New Comment**: ${{ github.event.comment.body }}
           theme_color: "0076D7"
 
