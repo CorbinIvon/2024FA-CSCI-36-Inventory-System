@@ -34,8 +34,8 @@ jobs:
           done <<< "$commits"
           
           # Debug: Log the content of commit_messages to see if it contains anything
-          echo "Commit messages content:"
-          echo "$commit_messages"
+          # echo "Commit messages content:"
+          # echo "$commit_messages"
 
           # Write the multi-line output to GITHUB_OUTPUT
           echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
