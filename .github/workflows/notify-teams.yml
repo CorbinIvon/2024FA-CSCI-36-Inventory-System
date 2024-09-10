@@ -22,20 +22,11 @@ jobs:
           title: "${{ github.actor }} - ${{ github.event_name }}"
           summary: "${{ github.actor }} - ${{ github.event.action }}"
           text: |
-            {% if github.event.issue %}
-              **New Issue**: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})
-            {% elif github.event.pull_request %}
-              **Pull Request**: [${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
-            {% elif github.event.commits %}
-              **Commit**: [${{ github.event.commits[0].message }}](${{
-                github.event.repository.html_url }}/commit/${{ github.event.commits[0].id }})
-            {% elif github.event.comment %}
-              **New Comment**: [Comment by ${{ github.actor }}](${{ github.event.comment.html_url }}) on issue/pull request
-            {% elif github.event.release %}
-              **New Release**: [${{ github.event.release.name }}](${{ github.event.release.html_url }}) - ${{ github.event.release.tag_name }}
-            {% elif github.event.fork %}
-              **Repository Forked**: [${{ github.repository.full_name }}](${{ github.repository.html_url }}) was forked by ${{ github.actor }}
-            {% else %}
-              **Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}
-            {% endif %}
+            ${{ github.event.issue ? '**New Issue**: [' + github.event.issue.title + '](' + github.event.issue.html_url + ')' 
+            : github.event.pull_request ? '**Pull Request**: [' + github.event.pull_request.title + '](' + github.event.pull_request.html_url + ')' 
+            : github.event.commits ? '**Commit**: [' + github.event.commits[0].message + '](' + github.event.repository.html_url + '/commit/' + github.event.commits[0].id + ')' 
+            : github.event.comment ? '**New Comment**: [Comment by ' + github.actor + '](' + github.event.comment.html_url + ') on issue/pull request' 
+            : github.event.release ? '**New Release**: [' + github.event.release.name + '](' + github.event.release.html_url + ') - ' + github.event.release.tag_name 
+            : github.event.fork ? '**Repository Forked**: [' + github.repository.full_name + '](' + github.repository.html_url + ') was forked by ' + github.actor 
+            : '**Action Details**: Event: ' + github.event_name + ', Action: ' + github.event.action }}
           theme_color: "0076D7"  # Optional: Customize with a hexadecimal color
