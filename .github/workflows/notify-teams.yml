@@ -80,7 +80,7 @@ jobs:
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "660fbd"
 
-      # Send notification with all commit details in a single webhook
+      # Send notification to Microsoft Teams with all commit messages in one webhook
       - name: Microsoft Teams Notification for Push Events
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
