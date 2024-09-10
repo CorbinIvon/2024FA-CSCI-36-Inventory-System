@@ -21,7 +21,10 @@ jobs:
       # Collect commit IDs, URLs, and messages as a matrix
       - id: matrix
         run: |
-          commits=$(echo '${{ toJson(github.event.commits) }}' | jq '[.[] | {id: .id, message: .message, url: .url}]')
+          # Convert commits to a valid JSON string and process with jq
+          commits=$(echo '${{ toJson(github.event.commits) }}' | jq -c '[.[] | {id: .id, message: .message, url: .url}]')
+
+          # Output the commit data to GITHUB_OUTPUT
           echo "commit_data=$commits" >> $GITHUB_OUTPUT
       - run: |
           echo "Commit Data: ${{ steps.matrix.outputs.commit_data }}"
