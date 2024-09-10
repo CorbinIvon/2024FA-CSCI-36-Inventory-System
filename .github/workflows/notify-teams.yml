@@ -21,8 +21,7 @@ jobs:
       - id: collect
         run: |
           commit_messages=""
-          # Loop through the commits array in JSON and extract necessary fields
-          for commit in $(echo '${{ toJson(github.event.commits) }}' | jq -c '.[]'); do
+          echo '${{ toJson(github.event.commits) }}' | jq -c '.[]' | while read -r commit; do
             commit_id=$(echo $commit | jq -r '.id')
             commit_url=$(echo $commit | jq -r '.url')
             commit_message=$(echo $commit | jq -r '.message')
