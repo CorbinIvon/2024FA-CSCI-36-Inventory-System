@@ -1,4 +1,4 @@
-name: Notify Microsoft Teams for All Actions
+name: Notify Microsoft Teams for Specific Events
 
 on: 
   push:                # Trigger on code push events
@@ -6,38 +6,38 @@ on:
   issues:              # Trigger on issue-related events
   workflow_dispatch:   # Manual workflow runs
   issue_comment:       # Trigger on issue comment events
-  pull_request_review: # Trigger on pull request reviews
-  pull_request_target: # Trigger on pull request events for forked repositories
   release:             # Trigger on release events
   fork:                # Trigger when repo is forked
 
 jobs:
   notify:
+    # Conditional execution: Only run the job when the repository is 'CorbinIvon/2024FA-CSCI-36-Inventory-System' and for certain events
+    if: github.repository == 'CorbinIvon/2024FA-CSCI-36-Inventory-System' && (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'issue_comment')
     runs-on: ubuntu-latest
     steps:
       - name: Set message for issue
-        if: ${{ github.event_name == 'issues' }}
+        if: github.event_name == 'issues'
         run: echo "Message=**New Issue**: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})" >> $GITHUB_ENV
 
       - name: Set message for pull request
-        if: ${{ github.event_name == 'pull_request' }}
+        if: github.event_name == 'pull_request'
         run: echo "Message=**Pull Request**: [${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})" >> $GITHUB_ENV
 
       - name: Set message for push
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'push'
         run: echo "Message=**Commit**: [${{ github.event.commits[0].message }}](${{
           github.event.repository.html_url }}/commit/${{ github.event.commits[0].id }})" >> $GITHUB_ENV
 
       - name: Set message for issue comment
-        if: ${{ github.event_name == 'issue_comment' }}
+        if: github.event_name == 'issue_comment'
         run: echo "Message=**New Comment**: [Comment by ${{ github.actor }}](${{ github.event.comment.html_url }})" >> $GITHUB_ENV
 
       - name: Set message for release
-        if: ${{ github.event_name == 'release' }}
+        if: github.event_name == 'release'
         run: echo "Message=**New Release**: [${{ github.event.release.name }}](${{ github.event.release.html_url }}) - ${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - name: Set message for fork
-        if: ${{ github.event_name == 'fork' }}
+        if: github.event_name == 'fork'
         run: echo "Message=**Repository Forked**: [${{ github.repository.full_name }}](${{ github.repository.html_url }}) was forked by ${{ github.actor }}" >> $GITHUB_ENV
 
       - name: Default message
