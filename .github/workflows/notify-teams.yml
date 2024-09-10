@@ -29,6 +29,9 @@ jobs:
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        commit: ${{ fromJSON(needs.setup_push_commits.outputs.matrix) }}
     steps:
       # Notify for issue events
       - name: Microsoft Teams Notification for Issues
@@ -72,10 +75,6 @@ jobs:
 
       # Send notification to Microsoft Teams for push events with all commit messages
       - name: Microsoft Teams Notification for Push Events
-        if: ${{ github.event_name == 'push' }}
-        strategy:
-          matrix:
-            commit: ${{ fromJSON(needs.setup_push_commits.outputs.matrix) }}
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -123,5 +122,5 @@ jobs:
           summary: "${{ github.actor }} - ${{ github.event_name }} ${{ github.event.action }}"
           text: |
             ${{ github.event_name }}<br>
-            **Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}
+            **Action Details**: Event: ${{ github.event_name }}, Action: ${{ github.event.action }}"
           theme_color: "ec05fc"
