@@ -51,7 +51,7 @@ jobs:
           summary: "${{ github.actor }} Pushed Commits"
           text: |
             **Commits:**<hr>
-            ${{ join(github.event.commits.*.message, '<hr>') }}
+              ${{ join(fromJson(toJson(github.event.commits)), '[', '.timestamp', ']<br>', '.message<hr>') }}
           theme_color: "0076D7"
 
       # Notify for issue comments
