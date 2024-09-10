@@ -22,13 +22,16 @@ jobs:
       - id: collect
         run: |
           commit_messages=""
-          for commit in "${{ toJson(github.event.commits) }}"; do
+          # Loop through the commits array in JSON and extract necessary fields
+          echo '${{ toJson(github.event.commits) }}' | jq -c '.[]' | while read commit; do
             commit_id=$(echo $commit | jq -r '.id')
             commit_url=$(echo $commit | jq -r '.url')
             commit_message=$(echo $commit | jq -r '.message')
             commit_messages="$commit_messages<code><a href=\"$commit_url\">$commit_id</a></code><br>$commit_message<hr>"
           done
           echo "commit_messages=$commit_messages" >> $GITHUB_OUTPUT
+      - run: |
+          echo "Commit Data: ${{ steps.collect.outputs.commit_messages }}"
 
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
