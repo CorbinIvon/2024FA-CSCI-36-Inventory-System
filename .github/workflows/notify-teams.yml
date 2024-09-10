@@ -26,12 +26,13 @@ jobs:
             commit_id=$(echo $commit | jq -r '.id')
             commit_url=$(echo $commit | jq -r '.url')
             commit_message=$(echo $commit | jq -r '.message')
-            commit_messages="$commit_messages<code><a href=\"$commit_url\">$commit_id</a></code><br>$commit_message<hr>"
+            commit_messages="$commit_messages<code><a href='$commit_url'>$commit_id</a></code><br>$commit_message<hr>"
           done
           # Properly output commit messages to GITHUB_OUTPUT using multiline output
-          echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
-          echo "$commit_messages" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "AAA" >> $GITHUB_OUTPUT
+          # echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
+          # echo "$commit_messages" >> $GITHUB_OUTPUT
+          # echo "EOF" >> $GITHUB_OUTPUT
 
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
