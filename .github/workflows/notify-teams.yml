@@ -86,6 +86,19 @@ jobs:
             **Status**: Issue has been closed by ${{ github.actor }}
           theme_color: "5600d7"
 
+      # Notify for issue reopened events
+      - name: Microsoft Teams Notification for Reopened Issues
+        if: ${{ github.event.issue && github.event.action == 'reopened' }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          title: "${{ github.actor }} - <a href='${{ github.event.issue.html_url }}'>Issue #${{ github.event.issue.number }} Reopened</a>"
+          summary: "${{ github.actor }} - Issue Reopened"
+          text: |
+            ${{ github.event_name }}<br>
+            **Issue Title**: ${{ github.event.issue.title }}<br>
+            **Status**: Issue has been reopened by ${{ github.actor }}
+          theme_color: "ff7700"
 
       # Notify for issue comments
       - name: Microsoft Teams Notification for Issue Comments
