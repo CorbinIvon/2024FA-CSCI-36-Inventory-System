@@ -41,7 +41,7 @@ jobs:
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "0076D7"
       
-      # Send notification to Microsoft Teams for push events with all commit messages 
+      # Send notification to Microsoft Teams for push events with all commit messages
       - name: Microsoft Teams Notification for Push Events
         if: ${{ github.event_name == 'push' }}
         uses: aliencube/microsoft-teams-actions@v0.8.0
