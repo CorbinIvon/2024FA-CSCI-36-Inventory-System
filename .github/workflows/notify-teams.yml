@@ -50,8 +50,8 @@ jobs:
           title: "${{ github.actor }} - Pushed Commits"
           summary: "${{ github.actor }} Pushed Commits"
           text: |
-            **Commits:**
-            ${{ join(github.event.commits.*.message, '<br><hr><br>') }}
+            **Commits:**<hr>
+            ${{ join(github.event.commits.*.message, '<br><hr>') }}
           theme_color: "0076D7"
 
       # Notify for issue comments
