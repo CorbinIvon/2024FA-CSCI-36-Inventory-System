@@ -42,8 +42,21 @@ jobs:
           echo "$commit_messages" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+  notify-all-commits:
+    needs: [setup_push_commits]
+    runs-on: ubuntu-latest
+    steps:
+      # Send notification to Microsoft Teams with all commit messages in one webhook
+      - name: Microsoft Teams Notification for Push Events
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          title: "${{ github.actor }} - Pushed Commits"
+          summary: "${{ github.actor }} pushed new commits"
+          text: "${{ needs.setup_push_commits.outputs.commit_messages }}"
+          theme_color: "12bd0f"
+
   notify:
-    needs: [setup_push_commits]  # Ensure push commit matrix is set up first
     runs-on: ubuntu-latest
     steps:
       # Notify for issue events
@@ -85,16 +98,6 @@ jobs:
             ${{ github.event_name }}<br>
             **Pull Request**: ${{ github.event.pull_request.title }}
           theme_color: "660fbd"
-
-      # Send notification to Microsoft Teams with all commit messages in one webhook
-      - name: Microsoft Teams Notification for Push Events
-        uses: aliencube/microsoft-teams-actions@v0.8.0
-        with:
-          webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          title: "${{ github.actor }} - Pushed Commits"
-          summary: "${{ github.actor }} pushed new commits"
-          text: "${{ needs.setup_push_commits.outputs.commit_messages }}"
-          theme_color: "12bd0f"
 
       # Notify for release events
       - name: Microsoft Teams Notification for Releases
