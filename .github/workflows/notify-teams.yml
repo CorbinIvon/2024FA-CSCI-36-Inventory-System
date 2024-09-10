@@ -100,7 +100,7 @@ jobs:
             **New Release**: ${{ github.event.release.name }} - ${{ github.event.release.tag_name }}
           theme_color: "0076D7"
 
-      # Notify for fork events
+      # Notify for fork events 
       - name: Microsoft Teams Notification for Fork Events
         if: ${{ github.event_name == 'fork' }}
         uses: aliencube/microsoft-teams-actions@v0.8.0
