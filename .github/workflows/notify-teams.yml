@@ -36,9 +36,6 @@ jobs:
   notify:
     needs: [setup_push_commits]  # Ensure push commit matrix is set up first
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        commit: ${{ fromJSON(needs.setup_push_commits.outputs.matrix) }}
     steps:
       # Notify for issue events
       - name: Microsoft Teams Notification for Issues
