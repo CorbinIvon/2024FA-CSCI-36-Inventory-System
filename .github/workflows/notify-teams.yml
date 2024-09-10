@@ -20,7 +20,7 @@ jobs:
     steps:
       - id: collect
         run: |
-          commit_messages=""
+          commit_messages="-wasdasdf-"
           echo '${{ toJson(github.event.commits) }}' | jq -c '.[]' | while read -r commit; do
             commit_id=$(echo $commit | jq -r '.id')
             commit_url=$(echo $commit | jq -r '.url')
