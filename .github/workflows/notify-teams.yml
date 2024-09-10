@@ -47,11 +47,11 @@ jobs:
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          title: "${{ github.actor }} - Push Event"
+          title: "${{ github.actor }} - Pushed Commits"
           summary: "${{ github.actor }} pushed commits"
           text: |
             **Commit Message**: ${{ github.event.commits[0].message }}
-          theme_color: "0076D7"
+          theme_color: "0076D7" 
 
       # Notify for issue comments
       - name: Microsoft Teams Notification for Issue Comments
