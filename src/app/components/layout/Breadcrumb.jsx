@@ -20,11 +20,10 @@ export default function Breadcrumb({ currentLocation, onNavigate }) {
           <li key={loc.id}>
             <button
               onClick={() => onNavigate(loc)}
-              className="text-blue-600 hover:underline"
+              className="pointer rounded bg-slate-700 hover:bg-slate-500 px-1"
             >
               {loc.name}
             </button>
-            {index < breadcrumbTrail.length - 1 && <span>/</span>}
           </li>
         ))}
       </ol>

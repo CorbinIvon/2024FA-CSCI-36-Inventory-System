@@ -5,6 +5,7 @@ import GoogleSignIn from '@/components/auth/GoogleSignIn';
 import LocationList from '@/components/locations/LocationList';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import { getLocations } from '@/utils/api'; // Import the API utility function
+import { ArrowLeftIcon, HomeIcon } from '@heroicons/react/solid'; // Using Heroicons for icons
 
 type Location = {
   id: string;
@@ -36,14 +37,31 @@ export default function HomePage() {
   const fetchLocations = async () => {
     setLoading(true);
     try {
-      const response = await getLocations(); // Call the API utility function
-      setLocations(response.locations.map((loc: any) => ({
-        id: loc.id,
-        name: loc.name,
-        description: loc.description || '',
-        parent: loc.parent || null,
-        children: loc.children || []
-      }))); // Map the response to ensure it matches the Location type
+      const response = await getLocations(); // Fetch all locations from the API
+
+      // Recursively assign parent references and build the full parent chain
+      const assignParent = (locations: Location[], parent: Location | null = null): Location[] => {
+        return locations.map((loc: any) => {
+          const location: Location = {
+            id: loc.id,
+            name: loc.name,
+            description: loc.description || '',
+            parent: parent, // Reference to the immediate parent
+            children: [] // Initialize children, will populate below
+          };
+
+          // Recursively assign children, and pass the current location as the parent
+          location.children = loc.children ? assignParent(loc.children, location) : [];
+
+          return location;
+        });
+      };
+
+      const locationsWithParents = assignParent(response.locations.map((loc: any) => ({
+        ...loc,
+        description: loc.description || '', // Ensure description is present
+      })));
+      setLocations(locationsWithParents);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -61,6 +79,18 @@ export default function HomePage() {
     setCurrentLocation(location);
   };
 
+  // Go back one directory (to the parent location)
+  const handleGoBack = () => {
+    if (currentLocation && currentLocation.parent) {
+      setCurrentLocation(currentLocation.parent); // Move to the parent of the current location
+    }
+  };
+
+  // Go back to the root location (home)
+  const handleGoHome = () => {
+    setCurrentLocation(null); // Go to root
+  };
+
   const renderLocations = () => {
     // If we're scoped into a location, show only the children of the current location
     const locationsToDisplay = currentLocation ? currentLocation.children || [] : locations;
@@ -69,8 +99,9 @@ export default function HomePage() {
       <LocationList locations={locationsToDisplay} onLocationSelect={handleLocationSelect} />
     );
   };
+
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-tr from-slate-900 to-slate-800">
+    <div className="min-h-screen p-8 bg-gradient-to-tr from-slate-900 to-slate-800 text-white">
       {!user ? (
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold mb-4">Welcome to the Inventory Management System</h1>
@@ -78,6 +109,27 @@ export default function HomePage() {
         </div>
       ) : (
         <div>
+          {/* Back Arrow and Home Button */}
+          {currentLocation && (
+            <div className="flex items-center mb-4 space-x-4">
+              <button
+                onClick={handleGoBack}
+                className="flex items-center space-x-2 text-blue-300 hover:text-white"
+              >
+                <ArrowLeftIcon className="w-5 h-5" />
+                <span>Back</span>
+              </button>
+
+              <button
+                onClick={handleGoHome}
+                className="flex items-center space-x-2 text-blue-300 hover:text-white"
+              >
+                <HomeIcon className="w-5 h-5" />
+                <span>Home</span>
+              </button>
+            </div>
+          )}
+
           {/* Breadcrumb Navigation */}
           {currentLocation && (
             <Breadcrumb currentLocation={currentLocation} onNavigate={handleNavigate} />
