@@ -33,6 +33,14 @@ export default function HomePage() {
     setUser(userData);
   };
 
+  type ApiLocation = {
+    id: string;
+    name: string;
+    description?: string;
+    parent?: string | null; // Assuming the API provides parent as an ID or null
+    children?: ApiLocation[];
+  };
+
   // Fetch all locations from API and store them in state
   const fetchLocations = async () => {
     setLoading(true);
@@ -40,8 +48,8 @@ export default function HomePage() {
       const response = await getLocations(); // Fetch all locations from the API
 
       // Recursively assign parent references and build the full parent chain
-      const assignParent = (locations: Location[], parent: Location | null = null): Location[] => {
-        return locations.map((loc: any) => {
+      const assignParent = (locations: ApiLocation[], parent: Location | null = null): Location[] => {
+        return locations.map((loc: ApiLocation) => {
           const location: Location = {
             id: loc.id,
             name: loc.name,
@@ -49,18 +57,15 @@ export default function HomePage() {
             parent: parent, // Reference to the immediate parent
             children: [] // Initialize children, will populate below
           };
-
+  
           // Recursively assign children, and pass the current location as the parent
           location.children = loc.children ? assignParent(loc.children, location) : [];
-
+  
           return location;
         });
       };
-
-      const locationsWithParents = assignParent(response.locations.map((loc: any) => ({
-        ...loc,
-        description: loc.description || '', // Ensure description is present
-      })));
+  
+      const locationsWithParents = assignParent(response.locations);
       setLocations(locationsWithParents);
       setLoading(false);
     } catch (error) {

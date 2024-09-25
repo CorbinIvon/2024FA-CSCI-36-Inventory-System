@@ -16,7 +16,7 @@ export default function Breadcrumb({ currentLocation, onNavigate }) {
   return (
     <nav className="mb-4">
       <ol className="flex space-x-2">
-        {breadcrumbTrail.map((loc, index) => (
+        {breadcrumbTrail.map((loc) => (
           <li key={loc.id}>
             <button
               onClick={() => onNavigate(loc)}
