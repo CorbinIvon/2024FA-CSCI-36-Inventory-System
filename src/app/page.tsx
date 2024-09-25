@@ -69,9 +69,8 @@ export default function HomePage() {
       <LocationList locations={locationsToDisplay} onLocationSelect={handleLocationSelect} />
     );
   };
-
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8 bg-gradient-to-tr from-slate-900 to-slate-800">
       {!user ? (
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-4xl font-bold mb-4">Welcome to the Inventory Management System</h1>
@@ -86,7 +85,7 @@ export default function HomePage() {
 
           {/* Current Location Description */}
           {currentLocation && (
-            <div className="mb-4 p-4 bg-white shadow rounded">
+            <div className="mb-4 p-4 bg-gradient-to-tl from-slate-600 to-slate-500 shadow rounded">
               <h2 className="text-2xl font-bold">{currentLocation.name}</h2>
               <p>{currentLocation.description}</p>
             </div>
