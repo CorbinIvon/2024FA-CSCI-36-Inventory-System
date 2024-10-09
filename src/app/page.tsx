@@ -4,22 +4,20 @@ import { useState, useEffect } from 'react';
 import GoogleSignIn from '@/components/auth/GoogleSignIn';
 import LocationList from '@/components/locations/LocationList';
 import Breadcrumb from '@/components/layout/Breadcrumb';
+import SearchBar from '@/components/search/SearchBar';
+import SearchResults from '@/components/search/SearchResults';
 import { getLocations } from '@/utils/api'; // Import the API utility function
 import { ArrowLeftIcon, HomeIcon } from '@heroicons/react/solid'; // Using Heroicons for icons
+import InventoryNode, { buildNodeMap, linkNodes, flattenTree, getOrphans } from '@/utils/node'; // Import InventoryNode and related functions
 
-type Location = {
-  id: string;
-  name: string;
-  description: string;
-  parent?: Location | null;
-  children?: Location[];
-};
+type Location = InventoryNode;
 
 export default function HomePage() {
   const [user, setUser] = useState<{ email: string; id: string } | null>(null);
   const [locations, setLocations] = useState<Location[]>([]); // Store fetched locations
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null); // For tracking current location
   const [loading, setLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState<Location[] | null>(null); // Store search results
 
   useEffect(() => {
     if (user) {
@@ -33,40 +31,23 @@ export default function HomePage() {
     setUser(userData);
   };
 
-  type ApiLocation = {
-    id: string;
-    name: string;
-    description?: string;
-    parent?: string | null; // Assuming the API provides parent as an ID or null
-    children?: ApiLocation[];
-  };
-
   // Fetch all locations from API and store them in state
   const fetchLocations = async () => {
     setLoading(true);
     try {
       const response = await getLocations(); // Fetch all locations from the API
 
-      // Recursively assign parent references and build the full parent chain
-      const assignParent = (locations: ApiLocation[], parent: Location | null = null): Location[] => {
-        return locations.map((loc: ApiLocation) => {
-          const location: Location = {
-            id: loc.id,
-            name: loc.name,
-            description: loc.description || '',
-            parent: parent, // Reference to the immediate parent
-            children: [] // Initialize children, will populate below
-          };
-  
-          // Recursively assign children, and pass the current location as the parent
-          location.children = loc.children ? assignParent(loc.children, location) : [];
-  
-          return location;
-        });
-      };
-  
-      const locationsWithParents = assignParent(response.locations);
-      setLocations(locationsWithParents);
+      // Convert API response to InventoryNode instances
+      const nodes = response.locations.map((loc: any) => new InventoryNode(loc.id, loc.parentID, loc));
+
+      // Build node map and link nodes
+      const nodeMap = buildNodeMap(nodes);
+      linkNodes(nodes, nodeMap);
+
+      // Get root nodes (orphans)
+      const rootNodes = getOrphans(nodes);
+
+      setLocations(rootNodes);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -103,6 +84,11 @@ export default function HomePage() {
     return (
       <LocationList locations={locationsToDisplay} onLocationSelect={handleLocationSelect} />
     );
+  };
+
+  // Handle search results
+  const handleSearchResults = (results: Location[] | null) => {
+    setSearchResults(results);
   };
 
   return (
@@ -143,10 +129,12 @@ export default function HomePage() {
           {/* Current Location Description */}
           {currentLocation && (
             <div className="mb-4 p-4 bg-gradient-to-tl from-slate-600 to-slate-500 shadow rounded">
-              <h2 className="text-2xl font-bold">{currentLocation.name}</h2>
-              <p>{currentLocation.description}</p>
+              <h2 className="text-2xl font-bold">{currentLocation.data?.name as string}</h2>
+              <p>{currentLocation.data?.description as string}</p>
             </div>
           )}
+          <SearchBar data={flattenTree(currentLocation || { children: locations } as InventoryNode)} onSearchResults={handleSearchResults} />
+          {searchResults && <SearchResults results={searchResults} onLocationSelect={handleLocationSelect} />}
 
           {/* Location List (show current location's children or root locations) */}
           {loading ? <p>Loading locations...</p> : renderLocations()}
