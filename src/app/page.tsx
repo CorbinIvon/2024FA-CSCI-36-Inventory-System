@@ -120,6 +120,7 @@ export default function HomePage() {
     <div className="min-h-screen p-8 bg-gradient-to-tr from-slate-900 to-slate-800 text-white">
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold mb-4">Inventory Management System</h1>
+        <p><a href="http://inventory-api.corbinmeier.net:18080/api/tree" target="_blank">API DEMO HERE</a></p>
       </div>
       {!user ? (
         <div className="flex flex-col items-center justify-center">
