@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import GoogleSignIn from '@/components/auth/GoogleSignIn';
-import LocationList from '@/components/locations/LocationList';
-import Breadcrumb from '@/components/layout/Breadcrumb';
-import { getLocations } from '@/utils/api'; // Import the API utility function
-import { ArrowLeftIcon, HomeIcon } from '@heroicons/react/solid'; // Using Heroicons for icons
+import { useState, useEffect } from "react";
+import GoogleSignIn from "@/components/auth/GoogleSignIn";
+import LocationList from "@/components/locations/LocationList";
+import Breadcrumb from "@/components/layout/Breadcrumb";
+import SearchBar from "@/components/search/SearchBar";
+import { getLocations } from "@/utils/api"; // Import the API utility function
+import { ArrowLeftIcon, HomeIcon } from "@heroicons/react/solid"; // Using Heroicons for icons
 
 type Location = {
   id: string;
@@ -48,28 +49,33 @@ export default function HomePage() {
       const response = await getLocations(); // Fetch all locations from the API
 
       // Recursively assign parent references and build the full parent chain
-      const assignParent = (locations: ApiLocation[], parent: Location | null = null): Location[] => {
+      const assignParent = (
+        locations: ApiLocation[],
+        parent: Location | null = null
+      ): Location[] => {
         return locations.map((loc: ApiLocation) => {
           const location: Location = {
             id: loc.id,
             name: loc.name,
-            description: loc.description || '',
+            description: loc.description || "",
             parent: parent, // Reference to the immediate parent
-            children: [] // Initialize children, will populate below
+            children: [], // Initialize children, will populate below
           };
-  
+
           // Recursively assign children, and pass the current location as the parent
-          location.children = loc.children ? assignParent(loc.children, location) : [];
-  
+          location.children = loc.children
+            ? assignParent(loc.children, location)
+            : [];
+
           return location;
         });
       };
-  
+
       const locationsWithParents = assignParent(response.locations);
       setLocations(locationsWithParents);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching locations:', error);
+      console.error("Error fetching locations:", error);
       setLoading(false);
     }
   };
@@ -98,18 +104,27 @@ export default function HomePage() {
 
   const renderLocations = () => {
     // If we're scoped into a location, show only the children of the current location
-    const locationsToDisplay = currentLocation ? currentLocation.children || [] : locations;
+    const locationsToDisplay = currentLocation
+      ? currentLocation.children || []
+      : locations;
 
     return (
-      <LocationList locations={locationsToDisplay} onLocationSelect={handleLocationSelect} />
+      <LocationList
+        locations={locationsToDisplay}
+        onLocationSelect={handleLocationSelect}
+      />
     );
   };
 
   return (
     <div className="min-h-screen p-8 bg-gradient-to-tr from-slate-900 to-slate-800 text-white">
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold mb-4">Inventory Management System</h1>
+      </div>
       {!user ? (
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-4xl font-bold mb-4">Welcome to the Inventory Management System</h1>
+          <p>TODO - This service requires that you sign in with Google</p>
+          <br />
           <GoogleSignIn onSignIn={handleSignIn} />
         </div>
       ) : (
@@ -134,12 +149,15 @@ export default function HomePage() {
               </button>
             </div>
           )}
-
+          {/* Search Bar */}
+          <SearchBar data={locations} onSearchResults={setLocations} />
           {/* Breadcrumb Navigation */}
           {currentLocation && (
-            <Breadcrumb currentLocation={currentLocation} onNavigate={handleNavigate} />
+            <Breadcrumb
+              currentLocation={currentLocation}
+              onNavigate={handleNavigate}
+            />
           )}
-
           {/* Current Location Description */}
           {currentLocation && (
             <div className="mb-4 p-4 bg-gradient-to-tl from-slate-600 to-slate-500 shadow rounded">
@@ -147,7 +165,6 @@ export default function HomePage() {
               <p>{currentLocation.description}</p>
             </div>
           )}
-
           {/* Location List (show current location's children or root locations) */}
           {loading ? <p>Loading locations...</p> : renderLocations()}
         </div>

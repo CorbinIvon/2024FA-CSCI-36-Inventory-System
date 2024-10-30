@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const SearchBar = ({ data, onSearchResults }) => {
-  const [query, setQuery] = useState(''); // Store the search input
+  const [query, setQuery] = useState(""); // Store the search input
 
   // Handle input changes and perform fuzzy search on the client side
   const handleInputChange = (event) => {
@@ -10,15 +10,22 @@ const SearchBar = ({ data, onSearchResults }) => {
 
     if (value.length >= 2) {
       const results = fuzzySearch(value, data); // Perform the fuzzy search on the fetched data
-      onSearchResults(results); // Send results to the parent component
+      if (typeof onSearchResults === "function") {
+        onSearchResults(results);
+      }
     } else {
-      onSearchResults(null); // Reset the search results when the query is too short
+      if (typeof onSearchResults === "function") {
+        onSearchResults(null); // Reset the search results when the query is too short
+      }
     }
   };
 
   // Simple fuzzy search function
   const fuzzySearch = (query, data) => {
     const lowercaseQuery = query.toLowerCase();
+    if (!Array.isArray(data)) {
+      return [];
+    }
     return data.filter((item) =>
       item.name.toLowerCase().includes(lowercaseQuery)
     );

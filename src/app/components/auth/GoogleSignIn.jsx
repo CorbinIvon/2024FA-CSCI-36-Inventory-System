@@ -1,5 +1,5 @@
 // src/components/auth/GoogleSignIn.jsx
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function GoogleSignIn({ onSignIn }) {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -7,8 +7,8 @@ export default function GoogleSignIn({ onSignIn }) {
   const handleSignIn = () => {
     // Dummy user data for testing
     const dummyUser = {
-      email: 'test@test.test',
-      id: '1',
+      email: "test@test.test",
+      id: "1",
     };
 
     // Simulate the sign-in process
@@ -27,7 +27,7 @@ export default function GoogleSignIn({ onSignIn }) {
           Sign in with Google
         </button>
       ) : (
-        <p>You are signed in as test@test.test</p>
+        <p>You are signed in</p>
       )}
     </div>
   );
